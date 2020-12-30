@@ -1,9 +1,6 @@
 # --- Day 2: 1202 Program Alarm ---
 
 # First star:
-# You notify the Elves that the computer's magic smoke seems to have escaped. "That computer ran Intcode programs like
-# the gravity assist program it was working on; surely there are enough spare parts up there to build a new Intcode
-# computer!"
 # An Intcode program is a list of integers separated by commas (like 1,0,0,3,99). To run one, start by looking at the
 # first integer (called position 0). Here, you will find an opcode - either 1, 2, or 99. The opcode indicates what to
 # do.
@@ -41,7 +38,7 @@
 # words, don't reuse memory from a previous attempt.
 # Find the input noun and verb that cause the program to produce the output 19690720. What is 100 * noun + verb?
 
-from all_days.intcode import incoder
+from all_days.intcode import run_intcoder
 
 
 def run(data_dir, star):
@@ -51,7 +48,7 @@ def run(data_dir, star):
     if star == 1:
         opcodes[1] = 12
         opcodes[2] = 2
-        new_opcodes = incoder(opcodes)
+        new_opcodes = run_intcoder(opcodes)
 
         print(f'Star {star} - Value at position 0 is now {new_opcodes[0]}')
         return new_opcodes[0]
@@ -64,7 +61,7 @@ def run(data_dir, star):
                 opcode_test = opcodes.copy()
                 opcode_test[1] = noun
                 opcode_test[2] = verb
-                new_opcodes = incoder(opcode_test)
+                new_opcodes = run_intcoder(opcode_test)
                 if new_opcodes[0] == 19690720:
                     solution = (noun, verb, noun * 100 + verb)
                     noun, verb = 100, 100
