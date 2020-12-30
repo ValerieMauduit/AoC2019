@@ -8,10 +8,11 @@ def param_value(opcodes, param, mode):
         raise ValueError(f'Mode {mode} not accepted')
 
 
-def run_intcoder(opcodes):
+def run_intcoder(opcodes, inputs=[]):
     pointer = 0
     output_value = None
     param1, param2 = 0, 0
+    n = 0
     while pointer <= len(opcodes):
         code = f'{opcodes[pointer]:05.0f}'
         command = int(code[-2:])
@@ -26,7 +27,10 @@ def run_intcoder(opcodes):
             opcodes[opcodes[pointer + 3]] = param1 * param2
             pointer += 4
         elif command == 3:         # Take input
-            opcodes[opcodes[pointer + 1]] = int(input('What is the entry?  '))
+            if len(inputs) < (n + 1):
+                inputs += [int(input('What is the entry?  '))]
+            opcodes[opcodes[pointer + 1]] = inputs[n]
+            n += 1
             pointer += 2
         elif command == 4:         # Provide output
             output_value = param1
