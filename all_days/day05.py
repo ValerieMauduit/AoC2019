@@ -65,7 +65,7 @@ def run(data_dir, star):
     if star in [1, 2]:
         with open(f'{data_dir}/input-day05.txt', 'r') as fic:
             opcodes = [int(x) for x in fic.read().split(',')]
-        diagnostic_code = run_intcoder(opcodes)
+        diagnostic_code = run_intcoder(opcodes)['output']
         print(f'Star {star} - Your diagnostic code is {diagnostic_code}')
         return diagnostic_code
     else:

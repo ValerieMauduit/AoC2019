@@ -55,6 +55,5 @@ def run_intcoder(opcodes, inputs=[]):
             pointer = len(opcodes) + 1
         else:                      # Error
             raise ValueError(f'Opcode digit {command} does not exist.')
-    if output_value == None:
-        return opcodes
-    return output_value
+
+    return {'opcodes': opcodes, 'output': output_value}

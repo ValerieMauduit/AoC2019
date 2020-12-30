@@ -15,11 +15,13 @@
 # input signal, it waits until one arrives.)
 # Your job is to find the largest output signal that can be sent to the thrusters by trying every possible combination
 # of phase settings on the amplifiers. Make sure that memory is not shared or reused between copies of the program.
+# 95757
 
 # Second star:
 
 from copy import deepcopy
 from all_days.intcode import run_intcoder
+from itertools import permutations
 
 
 def run(data_dir, star):
@@ -27,27 +29,14 @@ def run(data_dir, star):
         opcodes = [int(x) for x in fic.read().split(',')]
 
     if star == 1:
-        opcodesA = deepcopy(opcodes)
-        opcodesB = deepcopy(opcodes)
-        opcodesC = deepcopy(opcodes)
-        opcodesD = deepcopy(opcodes)
-        opcodesE = deepcopy(opcodes)
-
         max_thruster = 0
-        for A0 in range(5):
-            settingsB = [n for n in range(5) if n != A0]
-            outputA = run_intcoder(opcodesA, [A0, 0])
-            for B0 in settingsB:
-                settingsC = [n for n in settingsB if n != B0]
-                outputB = run_intcoder(opcodesB, [B0, outputA])
-                for C0 in settingsC:
-                    settingsD = [n for n in settingsC if n != C0]
-                    outputC = run_intcoder(opcodesC, [C0, outputB])
-                    for D0 in settingsD:
-                        E0 = [n for n in settingsD if n != D0][0]
-                        outputD = run_intcoder(opcodesD, [D0, outputC])
-                        thruster = run_intcoder(opcodesE, [E0, outputD])
-                        max_thruster = max(max_thruster, thruster)
+        for permutation in permutations(range(5)):
+            opcodes_serie = [deepcopy(opcodes) for n in range(5)]
+            output = 0
+            for amplifier in range(5):
+                output = run_intcoder(opcodes_serie[amplifier], [permutation[amplifier], output])['output']
+            max_thruster = max(max_thruster, output)
+
         print(f'Star {star} - The largest output signal is {max_thruster}')
         return max_thruster
 

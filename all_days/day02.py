@@ -48,7 +48,7 @@ def run(data_dir, star):
     if star == 1:
         opcodes[1] = 12
         opcodes[2] = 2
-        new_opcodes = run_intcoder(opcodes)
+        new_opcodes = run_intcoder(opcodes)['opcodes']
 
         print(f'Star {star} - Value at position 0 is now {new_opcodes[0]}')
         return new_opcodes[0]
@@ -61,7 +61,7 @@ def run(data_dir, star):
                 opcode_test = opcodes.copy()
                 opcode_test[1] = noun
                 opcode_test[2] = verb
-                new_opcodes = run_intcoder(opcode_test)
+                new_opcodes = run_intcoder(opcode_test)['opcodes']
                 if new_opcodes[0] == 19690720:
                     solution = (noun, verb, noun * 100 + verb)
                     noun, verb = 100, 100
