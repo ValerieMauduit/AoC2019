@@ -1,15 +1,40 @@
-def incoder(opcodes):
-    n = 0
-    while n <= len(opcodes):
-        code = opcodes[n]
-        if code == 1:
-            opcodes[opcodes[n + 3]] = opcodes[opcodes[n + 1]] + opcodes[opcodes[n + 2]]
-        elif code == 2:
-            opcodes[opcodes[n + 3]] = opcodes[opcodes[n + 1]] * opcodes[opcodes[n + 2]]
-        elif code == 99:
-            n = len(opcodes)
-        else:
-            n = len(opcodes)
-        n += 4
+def param_value(opcodes, param, mode):
+    if mode == 0:    # position mode
+        if param < len(opcodes):
+            return opcodes[param]
+    elif mode == 1:  # immediate mode
+        return param
+    else:
+        raise ValueError(f'Mode {mode} not accepted')
 
-    return opcodes
+
+def run_intcoder(opcodes):
+    pointer = 0
+    output_value = None
+    param1, param2 = 0, 0
+    while pointer <= len(opcodes):
+        code = f'{opcodes[pointer]:05.0f}'
+        command = int(code[-2:])
+        if pointer < len(opcodes): # Set parameters in case of needed for the instruction
+            param1 = param_value(opcodes, opcodes[pointer + 1], int(code[-3]))
+            if pointer < (len(opcodes) - 1):
+                param2 = param_value(opcodes, opcodes[pointer + 2], int(code[-4]))
+        if command == 1:           # Addition
+            opcodes[opcodes[pointer + 3]] = param1 + param2
+            pointer += 4
+        elif command == 2:         # Multiplication
+            opcodes[opcodes[pointer + 3]] = param1 * param2
+            pointer += 4
+        elif command == 3:         # Take input
+            opcodes[opcodes[pointer + 1]] = int(input('What is the entry?  '))
+            pointer += 2
+        elif command == 4:         # Provide output
+            output_value = param1
+            pointer += 2
+        elif command == 99:        # Exit the program
+            pointer = len(opcodes) + 1
+        else:                      # Error
+            raise ValueError(f'Opcode digit {command} does not exist.')
+    if output_value == None:
+        return opcodes
+    return output_value
