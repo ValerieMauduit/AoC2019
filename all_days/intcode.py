@@ -15,9 +15,9 @@ def run_intcoder(opcodes):
     while pointer <= len(opcodes):
         code = f'{opcodes[pointer]:05.0f}'
         command = int(code[-2:])
-        if pointer < len(opcodes): # Set parameters in case of needed for the instruction
+        if pointer < (len(opcodes) - 1): # Set parameters in case of needed for the instruction
             param1 = param_value(opcodes, opcodes[pointer + 1], int(code[-3]))
-            if pointer < (len(opcodes) - 1):
+            if pointer < (len(opcodes) - 2):
                 param2 = param_value(opcodes, opcodes[pointer + 2], int(code[-4]))
         if command == 1:           # Addition
             opcodes[opcodes[pointer + 3]] = param1 + param2
@@ -31,6 +31,22 @@ def run_intcoder(opcodes):
         elif command == 4:         # Provide output
             output_value = param1
             pointer += 2
+        elif command == 5:         # Jump if true
+            if param1 != 0:
+                pointer = param2
+            else:
+                pointer += 3
+        elif command == 6:         # Jump if false
+            if param1 == 0:
+                pointer = param2
+            else:
+                pointer += 3
+        elif command == 7:         # Less than
+            opcodes[opcodes[pointer + 3]] = (param1 < param2) * 1
+            pointer += 4
+        elif command == 8:         # Equals
+            opcodes[opcodes[pointer + 3]] = (param1 == param2) * 1
+            pointer += 4
         elif command == 99:        # Exit the program
             pointer = len(opcodes) + 1
         else:                      # Error

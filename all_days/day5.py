@@ -40,20 +40,33 @@
 # produce?
 
 # Second star:
+# Your computer is only missing a few opcodes:
+# - Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the
+#   second parameter. Otherwise, it does nothing.
+# - Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the
+#   second parameter. Otherwise, it does nothing.
+# - Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given
+#   by the third parameter. Otherwise, it stores 0.
+# - Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by
+#   the third parameter. Otherwise, it stores 0.
+# Like all instructions, these instructions need to support parameter modes as described above.
+# Normally, after an instruction is finished, the instruction pointer increases by the number of values in that
+# instruction. However, if the instruction modifies the instruction pointer, that value is used and the instruction
+# pointer is not automatically increased.
+# This time, when the TEST diagnostic program runs its input instruction to get the ID of the system to test, provide it
+# 5, the ID for the ship's thermal radiator controller. This diagnostic test suite only outputs one number, the
+# diagnostic code.
+# What is the diagnostic code for system ID 5?
 
 from all_days.intcode import run_intcoder
 
 
 def run(data_dir, star):
-    with open(f'{data_dir}/input-day05.txt', 'r') as fic:
-        opcodes = [int(x) for x in fic.read().split(',')]
-
-    if star == 1:
+    if star in [1, 2]:
+        with open(f'{data_dir}/input-day05.txt', 'r') as fic:
+            opcodes = [int(x) for x in fic.read().split(',')]
         diagnostic_code = run_intcoder(opcodes)
         print(f'Star {star} - Your diagnostic code is {diagnostic_code}')
         return diagnostic_code
-    elif star == 2:
-        print(f'Star {star} - ')
-        return
     else:
         raise Exception('Star number must be either 1 or 2.')
