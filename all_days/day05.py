@@ -58,15 +58,22 @@
 # diagnostic code.
 # What is the diagnostic code for system ID 5?
 
-from all_days.intcode import run_intcoder
+from all_days.intcode import Opcoder
 
 
 def run(data_dir, star):
-    if star in [1, 2]:
-        with open(f'{data_dir}/input-day05.txt', 'r') as fic:
-            opcodes = [int(x) for x in fic.read().split(',')]
-        diagnostic_code = run_intcoder(opcodes)['output']
-        print(f'Star {star} - Your diagnostic code is {diagnostic_code}')
-        return diagnostic_code
+    with open(f'{data_dir}/input-day05.txt', 'r') as fic:
+        opcodes = [int(x) for x in fic.read().split(',')]
+    computer = Opcoder(opcodes)
+
+    if star == 1:    # Answer is 9961446
+        computer.inputs(1)
+    elif star == 2:  # Answer is 742621
+        computer.inputs(5)
     else:
         raise Exception('Star number must be either 1 or 2.')
+
+    computer.run_until_exit()
+    diagnostic_code = computer.output_value
+    print(f'Star {star} - Your diagnostic code is {diagnostic_code}')
+    return diagnostic_code

@@ -8,52 +8,71 @@ def param_value(opcodes, param, mode):
         raise ValueError(f'Mode {mode} not accepted')
 
 
-def run_intcoder(opcodes, inputs=[]):
-    pointer = 0
-    output_value = None
-    param1, param2 = 0, 0
-    n = 0
-    while pointer <= len(opcodes):
-        code = f'{opcodes[pointer]:05.0f}'
-        command = int(code[-2:])
-        if pointer < (len(opcodes) - 1): # Set parameters in case of needed for the instruction
-            param1 = param_value(opcodes, opcodes[pointer + 1], int(code[-3]))
-            if pointer < (len(opcodes) - 2):
-                param2 = param_value(opcodes, opcodes[pointer + 2], int(code[-4]))
-        if command == 1:           # Addition
-            opcodes[opcodes[pointer + 3]] = param1 + param2
-            pointer += 4
-        elif command == 2:         # Multiplication
-            opcodes[opcodes[pointer + 3]] = param1 * param2
-            pointer += 4
-        elif command == 3:         # Take input
-            if len(inputs) < (n + 1):
-                inputs += [int(input('What is the entry?  '))]
-            opcodes[opcodes[pointer + 1]] = inputs[n]
-            n += 1
-            pointer += 2
-        elif command == 4:         # Provide output
-            output_value = param1
-            pointer += 2
-        elif command == 5:         # Jump if true
-            if param1 != 0:
-                pointer = param2
-            else:
-                pointer += 3
-        elif command == 6:         # Jump if false
-            if param1 == 0:
-                pointer = param2
-            else:
-                pointer += 3
-        elif command == 7:         # Less than
-            opcodes[opcodes[pointer + 3]] = (param1 < param2) * 1
-            pointer += 4
-        elif command == 8:         # Equals
-            opcodes[opcodes[pointer + 3]] = (param1 == param2) * 1
-            pointer += 4
-        elif command == 99:        # Exit the program
-            pointer = len(opcodes) + 1
-        else:                      # Error
-            raise ValueError(f'Opcode digit {command} does not exist.')
+class Opcoder():
+    def __init__(self, intcodes):
+        self.intcodes = intcodes
+        self.input_values = None
+        self.output_value = None
+        self._pointer = 0
+        self._exit = False
 
-    return {'opcodes': opcodes, 'output': output_value}
+    def inputs(self, inputs):
+        self.input_values = inputs
+
+    def param(self, rank):
+        code = f'{self.intcodes[self._pointer]:05.0f}'
+        return param_value(self.intcodes, self.intcodes[self._pointer + rank], int(code[- 2 - rank]))
+
+    def print(self):
+        print([f'({self.intcodes[n]})' if n == self._pointer else self.intcodes[n] for n in range(len(self.intcodes))])
+        return None
+
+    def run_step(self):
+        command_code = self.intcodes[self._pointer] % 100
+        if command_code == 1:     # Addition
+            self.intcodes[self.intcodes[self._pointer + 3]] = self.param(1) + self.param(2)
+            self._pointer += 4
+        elif command_code == 2:   # Multiplication
+            self.intcodes[self.intcodes[self._pointer + 3]] = self.param(1) * self.param(2)
+            self._pointer += 4
+        elif command_code == 3:   # Take input
+            if type(self.input_values) == list:
+                input_value = self.input_values[0]
+                self.input_values = self.input_values[1:]
+                if len(self.input_values) == 0:
+                    self.input_values = None
+            elif type(self.input_values) == int:
+                input_value = self.input_values
+                self.input_values = None
+            else:
+                raise Exception('No input value provided - at least one is needed')
+            self.intcodes[self.intcodes[self._pointer + 1]] = input_value # TODO: à revoir
+            self._pointer += 2
+        elif command_code == 4:   # Provide output
+            self.output_value = self.param(1)
+            self._pointer += 2
+        elif command_code == 5:   # Jump if true
+            if self.param(1) != 0:
+                self._pointer = self.param(2)
+            else:
+                self._pointer += 3
+        elif command_code == 6:   # Jump if false
+            if self.param(1) == 0:
+                self._pointer = self.param(2)
+            else:
+                self._pointer += 3
+        elif command_code == 7:   # Less than
+            self.intcodes[self.intcodes[self._pointer + 3]] = (self.param(1) < self.param(2)) * 1
+            self._pointer += 4
+        elif command_code == 8:   # Equals
+            self.intcodes[self.intcodes[self._pointer + 3]] = (self.param(1) == self.param(2)) * 1
+            self._pointer += 4
+        elif command_code == 99:  # Exit the program
+            self._pointer = len(self.intcodes) + 1
+            self._exit = True
+        else:
+            raise ValueError(f'Opcode digit command {command_code} does not exist.')
+
+    def run_until_exit(self):
+        while not self._exit:
+            self.run_step()

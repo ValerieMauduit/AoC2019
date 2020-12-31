@@ -38,31 +38,35 @@
 # words, don't reuse memory from a previous attempt.
 # Find the input noun and verb that cause the program to produce the output 19690720. What is 100 * noun + verb?
 
-from all_days.intcode import run_intcoder
+from all_days.intcode import Opcoder
 
 
 def run(data_dir, star):
     with open(f'{data_dir}/input-day02.txt', 'r') as fic:
         opcodes = [int(x) for x in fic.read().split(',')]
 
-    if star == 1:
+    if star == 1:    # Answer is 3409710
         opcodes[1] = 12
         opcodes[2] = 2
-        new_opcodes = run_intcoder(opcodes)['opcodes']
+        computer = Opcoder(opcodes)
+        computer.run_until_exit()
+        result = computer.intcodes[0]
 
-        print(f'Star {star} - Value at position 0 is now {new_opcodes[0]}')
-        return new_opcodes[0]
+        print(f'Star {star} - Value at position 0 is now {result}')
+        return result
 
-    elif star == 2:
+    elif star == 2:  # Alswer is 7912
         noun = 0
+        solution = None
         while noun < 100:
             verb = 0
             while verb < 100:
                 opcode_test = opcodes.copy()
                 opcode_test[1] = noun
                 opcode_test[2] = verb
-                new_opcodes = run_intcoder(opcode_test)['opcodes']
-                if new_opcodes[0] == 19690720:
+                computer = Opcoder(opcode_test)
+                computer.run_until_exit()
+                if computer.intcodes[0] == 19690720:
                     solution = (noun, verb, noun * 100 + verb)
                     noun, verb = 100, 100
                 verb += 1
