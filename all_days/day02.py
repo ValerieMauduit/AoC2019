@@ -49,6 +49,7 @@ def run(data_dir, star):
         opcodes[1] = 12
         opcodes[2] = 2
         computer = Opcoder(opcodes)
+        computer.pretty_print()
         computer.run_until_exit()
         result = computer.intcodes[0]
 

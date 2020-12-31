@@ -73,6 +73,7 @@ def run(data_dir, star):
     else:
         raise Exception('Star number must be either 1 or 2.')
 
+    computer.pretty_print()
     computer.run_until_exit()
     diagnostic_code = computer.output_value
     print(f'Star {star} - Your diagnostic code is {diagnostic_code}')

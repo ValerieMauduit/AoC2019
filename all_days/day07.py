@@ -62,57 +62,44 @@ def run(data_dir, star):
     if star == 1:    # Answer is 95757
         max_thruster = 0
         for permutation in permutations(range(5)):
-            opcodes_serie = [Opcoder(opcodes) for n in range(5)]
-            opcodes_serie[0].input(5)
-
-
-            opcodes_serie = [deepcopy(opcodes) for n in range(5)]
-            output = 0
-            for amplifier in range(5):
-                output = run_intcoder(opcodes_serie[amplifier], [permutation[amplifier], output])['output']
-            max_thruster = max(max_thruster, output)
+            amplifiers = [Opcoder(opcodes) for n in range(5)]
+            input_from_previous = 0
+            for amplifier, init_value in zip(amplifiers, permutation):
+                amplifier.inputs([init_value, input_from_previous])
+                amplifier.run_until_exit()
+                input_from_previous = amplifier.output_value
+            max_thruster = max(max_thruster, input_from_previous)
 
         print(f'Star {star} - The largest output signal is {max_thruster}')
         return max_thruster
 #
     elif star == 2:
-        opcodes = [3, 26, 1001, 26, -4, 26, 3, 27, 1002, 27, 2, 27, 1, 27, 26, 27, 4, 27, 1001, 28, -1, 28, 1005, 28, 6,
-                   99, 0, 0, 5]
-        permutation = (9, 8, 7, 6, 5)
+        phase_settings = permutations(range(5, 10))
         max_thruster = 0
+        for phase_setting in phase_settings:
+            print(f'=== Phase setting {phase_setting} ===')
+            # Initialize each amplifier
+            amplifiers = [Opcoder(opcodes) for n in range(5)]
+            for amplifier, init_value in zip(amplifiers, phase_setting):
+                amplifier.inputs(init_value)
+                amplifier.run_until_next_input()
+            # Then run the loop until an exit
+            input_from_previous = 0
+            exit_loop = False
+            nloop = 0
+            while not exit_loop:
+                nloop += 1
+                print(f'Loop {nloop}')
+                for amplifier in amplifiers:
+                    print(amplifier)
+                    amplifier.inputs(input_from_previous)
+                    amplifier.run_until_next_input()
+                    input_from_previous = amplifier.output_value
+                    print(amplifier.output_value)
+                exit_loop = amplifiers[4]._exit
+            max_thruster = max(max_thruster, input_from_previous)
 
-        # Initialisation de chaque amplifieur
-        print('initialisation')
-        print(opcodes)
-        for n in range(1):
-            a = run_intcoder(opcodes, [permutation[n], 0])['opcodes']
-        # amplifiers = [run_intcoder(opcodes, [permutation[n], 0])['opcodes'] for n in range(5)]
-
-        # Ensuite on entre dans la boucle de rétroaction qui part de 0
-        output = 0
-        for n in range(5):
-            print('loop')
-            result = run_intcoder(amplifiers[n], [output])
-            amplifiers[n] = result['opcodes']
-            output = result['output']
-            max_thruster = max(max_thruster, output)
-            print(f'Boucle 1, amplifier {n}: {output}')
-
-        # for permutation in permutations(range(5, 10)):
-        #     opcodes_serie = [deepcopy(opcodes) for n in range(5)]
-        #     # Initialisation de chaque amplifieur
-        #
-        #     # Ensuite on entre dans la boucle de rétroaction qui part de 0
-        #     output = 0
-        #
-        #
-        #
-        #     while output != None:
-        #         for amplifier in range(5):
-        #             output = run_intcoder(opcodes_serie[amplifier], [permutation[amplifier], output])['output']
-        #     max_thruster = max(max_thruster, output)
-        #
-        # print(f'Star {star} - The largest output signal is {max_thruster}')
-        return
+        print(f'Star {star} - The largest output signal is {max_thruster}')
+        return max_thruster
     else:
         raise Exception('Star number must be either 1 or 2.')
