@@ -74,32 +74,35 @@ def run(data_dir, star):
         return max_thruster
 #
     elif star == 2:
-        phase_settings = permutations(range(5, 10))
-        max_thruster = 0
-        for phase_setting in phase_settings:
-            print(f'=== Phase setting {phase_setting} ===')
+
+        max_thruster, best_phase_setting = 0, None
+        for phase_setting in permutations(range(5, 10)):
             # Initialize each amplifier
-            amplifiers = [Opcoder(opcodes) for n in range(5)]
+            amplifiers = [Opcoder(opcodes) for _ in range(5)]
             for amplifier, init_value in zip(amplifiers, phase_setting):
                 amplifier.inputs(init_value)
-                amplifier.run_until_next_input()
+                amplifier.run_until_no_input()
+
             # Then run the loop until an exit
             input_from_previous = 0
             exit_loop = False
-            nloop = 0
+            end_value = 0
             while not exit_loop:
-                nloop += 1
-                print(f'Loop {nloop}')
                 for amplifier in amplifiers:
-                    print(amplifier)
                     amplifier.inputs(input_from_previous)
-                    amplifier.run_until_next_input()
+                    amplifier.run_until_next_output()
                     input_from_previous = amplifier.output_value
-                    print(amplifier.output_value)
-                exit_loop = amplifiers[4]._exit
-            max_thruster = max(max_thruster, input_from_previous)
+                amplifiers[4].run_until_no_input()
+                if amplifiers[4].output_value is not None:
+                    end_value = amplifiers[4].output_value
+                # Then test if amplifiers[4] can continue to exit
+                exit_loop = amplifiers[4].exit
 
-        print(f'Star {star} - The largest output signal is {max_thruster}')
+            if end_value > max_thruster:
+                best_phase_setting = phase_setting
+                max_thruster = end_value
+        print(f'Star {star} - The max thruster value is {max_thruster} for phase setting {best_phase_setting}')
         return max_thruster
+
     else:
         raise Exception('Star number must be either 1 or 2.')

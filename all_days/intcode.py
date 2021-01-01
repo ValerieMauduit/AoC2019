@@ -16,9 +16,9 @@ class Command():
         self.input_value = input_value
         self.position = position
 
-    def type(self):
+    def type(self, debug=True):
         command_type = self.intcodes[self.position] % 100
-        if command_type not in [1, 2, 3, 4, 5, 6, 7, 8, 99]:
+        if debug and (command_type not in [1, 2, 3, 4, 5, 6, 7, 8, 99]):
             raise ValueError(f'Opcode digit command {command_type} does not exist.')
         return command_type
 
@@ -43,9 +43,9 @@ class Command():
         ]
 
     def next_position(self):
-        if self.type() in [1, 2, 7, 8]:
-            return self.position + 4
-        elif self.type() in [3, 4]:
+        if self.type() in [1, 2, 3, 7, 8]:
+            return self.position + self.nb_params() + 2
+        elif self.type() == 4:
             return self.position + 2
         elif self.type() == 5:  # Jump if True
             if self.params()[0] != 0:
@@ -96,13 +96,17 @@ class Command():
             5: 'Jump if True', 6: 'Jump if False', 7: 'Less than', 8: 'Equals',
             99: 'Exit'
         }
-        next = self.next_position()
-        if self.next_position() == self.position:
-            next = self.position +1
-        sequence = ', '.join([str(n) for n in self.intcodes[self.position:next]])
-        if pointer:
-            sequence += '    *******'
-        print(f'({self.position:5.0f}) {types_dict[self.type()]:<16} | ' + sequence)
+        if self.type(debug=False) in types_dict.keys():
+            right_position = self.position + self.nb_params() + 1
+            if self.type() in [1, 2, 3, 7, 8]: # Need extra parameter commands
+                right_position += 1
+            sequence = ', '.join([str(n) for n in self.intcodes[self.position:right_position]])
+            if pointer:
+                sequence += '    *******'
+            print(f'({self.position:5.0f}) {types_dict[self.type()]:<20} | ' + sequence)
+        else:
+            sequence = ', '.join([str(n) for n in self.intcodes[self.position:]])
+            print(f'({self.position:5.0f}) UNKNOWN COMMAND TYPE | ' + sequence)
 
 
 class Opcoder():
@@ -128,9 +132,12 @@ class Opcoder():
             if pos == self.pointer:
                 print_pointer = True
             command.print(print_pointer)
-            pos = command.next_position()
-            if command.exit():
-                pos = len(self.intcodes) + 1
+            if command.type(debug=False) in [5, 6, 99]:            # Jump/Exit commands
+                pos += command.nb_params() + 1
+            elif command.type(debug=False) in [1, 2, 3, 4, 7, 8]:  # Normal reading commands
+                pos = command.next_position()
+            else:
+                pos = len(self.intcodes) + 1                       # End of opcodes list
         print('  ')
         return None
 
@@ -166,5 +173,6 @@ class Opcoder():
             self.run_step()
 
     def run_until_next_output(self):
+        self.output_value = None
         while (not self.exit) and (self.output_value is None):
             self.run_step()
