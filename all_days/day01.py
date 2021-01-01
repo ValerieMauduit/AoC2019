@@ -31,9 +31,9 @@ def run(data_dir, star):
     with open(f'{data_dir}/input-day01.txt', 'r') as fic:
         modules = [int(x) for x in fic.read().split('\n')[:-1]]
 
-    if star == 1:
+    if star == 1:    # Answer is 3167282
         fuel_requirement = sum([x // 3 - 2 for x in modules])
-    elif star == 2:
+    elif star == 2:  # Answer is 4748063
         fuel_requirement = sum([total_fuel(module) for module in modules])
     else:
         raise Exception('Star number must be either 1 or 2.')

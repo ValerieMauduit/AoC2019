@@ -53,7 +53,7 @@ def run(data_dir, star):
     w2 = pd.DataFrame({
         'x': [p[0] for p in wire2], 'y': [p[1] for p in wire2], 'd': [abs(p[0]) + abs(p[1]) for p in wire2]})
 
-    if star == 1:
+    if star == 1:    # Answer is 225
         w1 = w1.sort_values(by='d')
         w2 = w2.sort_values(by='d')
         ww = pd.merge(w1, w2, how='inner', on='d', suffixes=('1', '2'))
@@ -62,7 +62,7 @@ def run(data_dir, star):
         print(f'Star {star} - Closest intersection Manhattan distance is {closest_intersection}')
         return closest_intersection
 
-    elif star == 2:
+    elif star == 2:  # Answer is 35194
         w1['l'] = w1.index.astype(int)
         w2['l'] = w2.index.astype(int)
         ww = pd.merge(w1, w2, how='inner', on='d', suffixes=('1', '2'))
