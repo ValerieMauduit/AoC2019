@@ -55,6 +55,37 @@ from all_days.intcode import Opcoder
 from itertools import permutations
 
 
+def star2(opcodes):
+    max_thruster, best_phase_setting = 0, None
+    for phase_setting in permutations(range(5, 10)):
+        # Initialize each amplifier
+        amplifiers = [Opcoder(opcodes) for _ in range(5)]
+        for amplifier, init_value in zip(amplifiers, phase_setting):
+            amplifier.inputs(init_value)
+            amplifier.run_until_no_input()
+
+        # Then run the loop until an exit
+        input_from_previous = 0
+        exit_loop = False
+        end_value = 0
+        while not exit_loop:
+            for amplifier in amplifiers:
+                amplifier.inputs(input_from_previous)
+                amplifier.run_until_next_output()
+                input_from_previous = amplifier.output_value
+            amplifiers[4].run_until_no_input()
+            if amplifiers[4].output_value is not None:
+                end_value = amplifiers[4].output_value
+            # Then test if amplifiers[4] can continue to exit
+            exit_loop = amplifiers[4].exit
+
+        if end_value > max_thruster:
+            best_phase_setting = phase_setting
+            max_thruster = end_value
+
+    return (best_phase_setting, max_thruster)
+
+
 def run(data_dir, star):
     with open(f'{data_dir}/input-day07.txt', 'r') as fic:
         opcodes = [int(x) for x in fic.read().split(',')]
@@ -74,34 +105,8 @@ def run(data_dir, star):
         return max_thruster
 #
     elif star == 2:
-
-        max_thruster, best_phase_setting = 0, None
-        for phase_setting in permutations(range(5, 10)):
-            # Initialize each amplifier
-            amplifiers = [Opcoder(opcodes) for _ in range(5)]
-            for amplifier, init_value in zip(amplifiers, phase_setting):
-                amplifier.inputs(init_value)
-                amplifier.run_until_no_input()
-
-            # Then run the loop until an exit
-            input_from_previous = 0
-            exit_loop = False
-            end_value = 0
-            while not exit_loop:
-                for amplifier in amplifiers:
-                    amplifier.inputs(input_from_previous)
-                    amplifier.run_until_next_output()
-                    input_from_previous = amplifier.output_value
-                amplifiers[4].run_until_no_input()
-                if amplifiers[4].output_value is not None:
-                    end_value = amplifiers[4].output_value
-                # Then test if amplifiers[4] can continue to exit
-                exit_loop = amplifiers[4].exit
-
-            if end_value > max_thruster:
-                best_phase_setting = phase_setting
-                max_thruster = end_value
-        print(f'Star {star} - The max thruster value is {max_thruster} for phase setting {best_phase_setting}')
+        phase_setting, max_thruster = star2(opcodes)
+        print(f'Star {star} - The max thruster value is {max_thruster} for phase setting {phase_setting}')
         return max_thruster
 
     else:
