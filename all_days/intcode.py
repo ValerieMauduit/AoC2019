@@ -133,6 +133,16 @@ class Opcoder():
 
     def inputs(self, inputs):
         self.input_values = inputs
+        return None
+
+    def set_pointer(self, position):
+        self.pointer = position
+        self.exit = False
+        return None
+
+    def initialize_outputs(self):
+        self.output_values = []
+        return None
 
     def print(self):
         print([f'({self.intcodes[n]})' if n == self.pointer else self.intcodes[n] for n in range(len(self.intcodes))])
