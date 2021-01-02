@@ -33,24 +33,10 @@ def run(data_dir, star):
         opcodes = [int(x) for x in fic.read().split(',')]
     if star == 1:
         boost = Opcoder(opcodes)
-        boost.pretty_print()
         boost.inputs([1])
-        # boost.run_until_exit()
-        # print(boost.output_values)
-        for l in range(10):
-            boost.run_step()
-            boost.pretty_print()
-        #     boost.inputs([1])
-        #     boost.initialize_outputs()
-        #     boost.run_until_exit()
-        #     print(boost.output_values)
-        #     nee = deepcopy(boost.intcodes)
-        #     if prev == nee:
-        #         print(f'Loop {l} ne change pas l\'opcoder')
-        #     print(boost.output_values)
-
-        print(f'Star {star} - ')
-        return
+        boost.run_until_exit()
+        print(f'Star {star} - BOOST keycode is {boost.output_values[0]}')
+        return boost.output_values[0]
     elif star == 2:
         print(f'Star {star} - ')
         return
