@@ -1,19 +1,37 @@
 from copy import deepcopy
 
+
 def param_value(opcodes, position, mode, base=0):
-    if mode == 0:    # position mode
-        if opcodes[position] < len(opcodes):
-            return opcodes[opcodes[position]]
+    if mode == 1:         # immediate mode
+        return opcodes[position]
+    elif mode in [0, 2]:  # position modes
+        new_position = param_position(opcodes, position, mode, base)
+        if new_position < len(opcodes):
+            return opcodes[new_position]
         else:
             return 0
-    elif mode == 1:  # immediate mode
-        return opcodes[position]
-    elif mode == 2:  # relative mode
-        return opcodes[opcodes[position] + base]
     else:
         raise ValueError(f'Mode {mode} not accepted')
 
 
+def param_position(opcodes, position, mode, base=0):
+    if mode == 0:    # position mode
+        return opcodes[position]
+    elif mode == 2:  # relative mode
+        return opcodes[position] + base
+
+
+# Command types summary:
+# 1 - addition - takes 3 parameters: param1 + param2 stored in param3
+# 2 - multiplication mode - takes 3 parameters: param1 * param2 stored in param3
+# 3 - take input - takes 1 parameter: stores input in param1
+# 4 - provide output - takes 1 parameter: takes param1 and put value in output
+# 5 - jump if true - takes 2 parameters: if param1 != 0, go to param2
+# 6 - jump if false - takes 2 parameters: if param1 == 0, go to param2
+# 7 - less than - takes 3 parameters: if param1 < param2, param3 stores 1, else param3 stores 0
+# 8 - equals - takes 3 parameters: if param1 == param2, param3 stores 1, else param3 stores 0
+# 9 - offset - takes 1 parameter: relative basis incremented by param1
+# 99 - exit - no parameter
 class Command():
     def __init__(self, intcodes, position, input_value=None, relative_basis=0):
         self.intcodes = intcodes
@@ -34,12 +52,14 @@ class Command():
         return f'{self.intcodes[self.position]:05.0f}'
 
     def nb_params(self):
-        if self.type() in [3, 99]:
+        if self.type() in [99]:
             return 0
-        elif self.type() in [4, 9]:
+        elif self.type() in [3, 4, 9]:
             return 1
-        elif self.type() in [1, 2, 5, 6, 7, 8]:
+        elif self.type() in [5, 6]:
             return 2
+        elif self.type() in [1, 2, 7, 8]:
+            return 3
 
     def params(self):
         return [
@@ -48,27 +68,29 @@ class Command():
         ]
 
     def next_position(self):
-        if self.type() in [1, 2, 3, 7, 8]:  # Commands with parameters + write position
-            return self.position + self.nb_params() + 2
-        elif self.type() in [4, 9]:         # Commands with parameters and no write in memory
-            return self.position + 2
-        elif self.type() == 5:              # Jump if True
+        if self.type() in [1, 2, 3, 4, 7, 8, 9]:  # Commands with parameters
+            return self.position + self.nb_params() + 1
+        elif self.type() == 5:                    # Jump if True
             if self.params()[0] != 0:
                 return self.params()[1]
             else:
                 return self.position + 3
-        elif self.type() == 6:              # Jump if False
+        elif self.type() == 6:                    # Jump if False
             if self.params()[0] == 0:
                 return self.params()[1]
             else:
                 return self.position + 3
-        elif self.type() == 99:             # Exit
+        elif self.type() == 99:                   # Exit
             return None
 
     def write_position(self):
         if self.type() in [4, 5, 6, 9, 99]:
             return None
-        return self.intcodes[self.position + self.nb_params() + 1]
+        elif self.type() in [1, 2, 7, 8]:
+            rank = 3
+        else:
+            rank = 1
+        return param_position(self.intcodes, self.position + rank, int(self.code()[-2 - rank]), self.relative_basis)
 
     def write_value(self):
         if self.type() == 1:    # Addition
@@ -92,16 +114,14 @@ class Command():
         return None
 
     def execute_command(self):
-        if self.write_position() is not None:  # Write in memory commands
+        if self.write_position() is not None:   # Write in memory commands
             if self.write_position() >= len(self.intcodes):
                 temp = [0 for _ in range(self.write_position() + 1)]
                 temp[:len(self.intcodes)] = self.intcodes
                 self.intcodes = deepcopy(temp)
             self.intcodes[self.write_position()] = self.write_value()
-
         elif self.type() == 9:                   # Update relative basis command
             self.relative_basis += self.params()[0]
-
 
     def print(self, pointer=False):
         types_dict = {

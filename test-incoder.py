@@ -1,4 +1,4 @@
-from all_days.intcode import Command, Opcoder, param_value
+from all_days.intcode import Command, Opcoder, param_value, param_position
 
 # For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
 def test_param_values():
@@ -6,15 +6,21 @@ def test_param_values():
     opcodes[50] = 73
     opcodes[43] = 11
     position_param = param_value(opcodes, 1, 0)
+    position_position = param_position(opcodes, 1, 0)
     value_param = param_value(opcodes, 0, 1)
     relative_param = param_value(opcodes, 3, 2, 50)
+    relative_position = param_position(opcodes, 3, 2, 50)
 
     if position_param != 42:
         raise Exception(f'Param value {position_param} is not expected value 42')
+    if position_position != 2:
+        raise Exception(f'Param position {position_position} is not expected value 2')
     if value_param != 12:
         raise Exception(f'Param value {value_param} is not expected value 12')
     if relative_param != 11:
         raise Exception(f'Param value {relative_param} is not expected value 11')
+    if relative_position != 43:
+        raise Exception(f'Param position {relative_position} is not expected value 43')
     print('-- test_param_values went ok --')
 
 
@@ -58,7 +64,7 @@ def test_command_addition():
     opcodes = [1001, 4, 3, 2, 12]
     expected = {
         'code': '01001', 'type': 1,
-        'nb_params': 2, 'params': [12, 3], 'input_v': None, 'opcodes': [1001, 4, 15, 2, 12], 'output_v': None,
+        'nb_params': 3, 'params': [12, 3, 3], 'input_v': None, 'opcodes': [1001, 4, 15, 2, 12], 'output_v': None,
         'rel_base': 0,
         'write_v': 15, 'write_p': 2, 'next_p': 4, 'exit': False,
     }
@@ -70,7 +76,7 @@ def test_command_multiplication():
     opcodes = [1002, 4, 3, 1, 12]
     expected = {
         'code': '01002', 'type': 2,
-        'nb_params': 2, 'params': [12, 3], 'input_v': None, 'opcodes': [1002, 36, 3, 1, 12], 'output_v': None,
+        'nb_params': 3, 'params': [12, 3, 4], 'input_v': None, 'opcodes': [1002, 36, 3, 1, 12], 'output_v': None,
         'rel_base': 0,
         'write_v': 36, 'write_p': 1, 'next_p': 4, 'exit': False,
     }
@@ -83,7 +89,7 @@ def test_command_take_input():
     input_v = 73
     expected = {
         'code': '01003', 'type': 3,
-        'nb_params': 0, 'params': [], 'input_v': 73, 'opcodes': [73, 0, 3, 4, 12], 'output_v': None,
+        'nb_params': 1, 'params': [1003], 'input_v': 73, 'opcodes': [73, 0, 3, 4, 12], 'output_v': None,
         'rel_base': 0,
         'write_v': 73, 'write_p': 0, 'next_p': 2, 'exit': False,
     }
@@ -131,7 +137,7 @@ def test_command_less_than():
     opcodes = [7, 0, 3, 5, 12, 42]
     expected = {
         'code': '00007', 'type': 7,
-        'nb_params': 2, 'params': [7, 5], 'input_v': None, 'opcodes': [7, 0, 3, 5, 12, 0], 'output_v': None,
+        'nb_params': 3, 'params': [7, 5, 42], 'input_v': None, 'opcodes': [7, 0, 3, 5, 12, 0], 'output_v': None,
         'rel_base': 0,
         'write_v': 0, 'write_p': 5, 'next_p': 4, 'exit': False,
     }
@@ -143,7 +149,7 @@ def test_command_equals():
     opcodes = [8, 0, 4, 5, 8, 42]
     expected = {
         'code': '00008', 'type': 8,
-        'nb_params': 2, 'params': [8, 8], 'input_v': None, 'opcodes': [8, 0, 4, 5, 8, 1], 'output_v': None,
+        'nb_params': 3, 'params': [8, 8, 42], 'input_v': None, 'opcodes': [8, 0, 4, 5, 8, 1], 'output_v': None,
         'rel_base': 0,
         'write_v': 1, 'write_p': 5, 'next_p': 4, 'exit': False,
     }

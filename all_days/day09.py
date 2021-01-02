@@ -35,12 +35,11 @@ def run(data_dir, star):
         boost = Opcoder(opcodes)
         boost.pretty_print()
         boost.inputs([1])
-        boost.run_until_exit()
-        print(boost.output_values)
-
-        # for l in range(5):
-        #     prev = deepcopy(boost.intcodes)
-        #     boost.set_pointer(0)
+        # boost.run_until_exit()
+        # print(boost.output_values)
+        for l in range(10):
+            boost.run_step()
+            boost.pretty_print()
         #     boost.inputs([1])
         #     boost.initialize_outputs()
         #     boost.run_until_exit()
