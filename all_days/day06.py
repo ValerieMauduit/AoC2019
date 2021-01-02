@@ -37,12 +37,12 @@ def run(data_dir, star):
         df = df.loc[condition]
         level += 1
 
-    if star == 1:
+    if star == 1:    # Answer is 142915
         total_orbits = counts['orbits'].sum()
         print(f'Star {star} - the total number of direct and indirect orbits is {total_orbits}')
         return total_orbits
 
-    elif star == 2:
+    elif star == 2:  # Answer is 283
         me = 'YOU'
         san = 'SAN'
         if (counts.loc[counts['satellite'] == san, 'orbits'].values[0] >

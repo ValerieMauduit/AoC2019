@@ -18,7 +18,7 @@
 # How many different passwords within the range given in your puzzle input meet all of the criteria?
 
 def run(star):
-    if star == 1:
+    if star == 1:    # Answer is 466
         nbpswd = 0
         for n in range(387638, 919123 + 1):
             pwd = str(n)
@@ -29,7 +29,7 @@ def run(star):
         print(f'Star {star} - There are {nbpswd} different passwords in the range')
         return nbpswd
 
-    elif star == 2:
+    elif star == 2:  # Answer is 292
         nbpswd = 0
         for n in range(387638, 919123 + 1):
             pwd = str(n)
