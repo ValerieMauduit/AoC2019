@@ -4,6 +4,8 @@ def param_value(opcodes, position, mode, base=0):
     if mode == 0:    # position mode
         if opcodes[position] < len(opcodes):
             return opcodes[opcodes[position]]
+        else:
+            return 0
     elif mode == 1:  # immediate mode
         return opcodes[position]
     elif mode == 2:  # relative mode
@@ -91,7 +93,12 @@ class Command():
 
     def execute_command(self):
         if self.write_position() is not None:  # Write in memory commands
+            if self.write_position() >= len(self.intcodes):
+                temp = [0 for _ in range(self.write_position() + 1)]
+                temp[:len(self.intcodes)] = self.intcodes
+                self.intcodes = deepcopy(temp)
             self.intcodes[self.write_position()] = self.write_value()
+
         elif self.type() == 9:                   # Update relative basis command
             self.relative_basis += self.params()[0]
 
@@ -119,7 +126,7 @@ class Opcoder():
     def __init__(self, intcodes):
         self.intcodes = deepcopy(intcodes)
         self.input_values = None
-        self.output_value = None
+        self.output_values = []
         self.pointer = 0
         self.exit = False
         self.relative_basis = 0
@@ -159,7 +166,7 @@ class Opcoder():
         command.execute_command()
 
         if command.output_value() is not None:
-            self.output_value = command.output_value()
+            self.output_values += [command.output_value()]
         self.exit = command.exit()
         self.intcodes = command.intcodes
         self.pointer = command.next_position()
@@ -181,6 +188,6 @@ class Opcoder():
             self.run_step()
 
     def run_until_next_output(self):
-        self.output_value = None
-        while (not self.exit) and (self.output_value is None):
+        nb_outputs = len(self.output_values)
+        while (not self.exit) and (len(self.output_value) == nb_outputs):
             self.run_step()

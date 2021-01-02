@@ -1,4 +1,4 @@
-from all_days.intcode import Command, param_value
+from all_days.intcode import Command, Opcoder, param_value
 
 # For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
 def test_param_values():
@@ -186,6 +186,34 @@ def test_command_exit():
     print('-- test_command_exit went ok --')
 
 
+def day09_examples():
+    # This opcoder should take no input and produce a copy of itself as output.
+    opcodes = [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99]
+    opcoder1 = Opcoder(opcodes)
+    opcoder1.run_until_exit()
+    if opcoder1.output_values != opcodes:
+        raise Exception('Output values should be exactly the input opcodes list')
+
+    # This opcoder should output a 16-digit number.
+    opcodes = [1102, 34915192, 34915192, 7, 4, 7, 99, 0]
+    opcoder2 =Opcoder(opcodes)
+    opcoder2.run_until_exit()
+    if len(opcoder2.output_values) != 1:
+        raise Exception('Output values should be a list of 1 digit exactly')
+    if len(str(opcoder2.output_values[0])) != 16:
+        raise Exception('Output value should be a 16-digit number')
+
+    # This opcoder should output the large number in the middle.
+    opcodes = [104, 1125899906842624, 99]
+    opcoder3 = Opcoder(opcodes)
+    opcoder3.run_until_exit()
+    if len(opcoder3.output_values) != 1:
+        raise Exception('Output values should be a list of 1 digit exactly')
+    if opcoder3.output_values[0] != opcodes[1]:
+        raise Exception(f'Output value should be the value {opcodes[1]}')
+    print('--- Day 9 examples went ok ---')
+
+
 def main():
     test_param_values()
     test_command_addition()
@@ -198,6 +226,7 @@ def main():
     test_command_equals()
     test_command_offset()
     test_command_exit()
+    day09_examples()
 
 
 if __name__ == "__main__":
