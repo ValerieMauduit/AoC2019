@@ -18,8 +18,8 @@ def test_param_values():
     print('-- test_param_values went ok --')
 
 
-def test_command(opcodes, input_value, expected):
-    command = Command(opcodes, 0, input_value)
+def test_command(opcodes, input_value, expected, position=0, base=0):
+    command = Command(opcodes, position, input_value, base)
 
     if command.code() != expected['code']:
         raise Exception(f'Command code {command.code()} is not expected value {expected["code"]}')
@@ -44,10 +44,14 @@ def test_command(opcodes, input_value, expected):
     if command.output_value() != expected['output_v']:
         raise Exception(f'Command output value {command.output_value()} is not expected value {expected["output_v"]}')
     command.execute_command()
+    if command.relative_basis != expected['rel_base']:
+        raise Exception(f'Command relative basis {command.relative_basis} is not expected value {expected["rel_base"]}')
+
     if command.intcodes != expected['opcodes']:
         raise Exception(
             f'Command opcodes after execution {command.intcodes} is not expected value {expected["opcodes"]}'
         )
+    return command
 
 
 def test_command_addition():
@@ -55,6 +59,7 @@ def test_command_addition():
     expected = {
         'code': '01001', 'type': 1,
         'nb_params': 2, 'params': [12, 3], 'input_v': None, 'opcodes': [1001, 4, 15, 2, 12], 'output_v': None,
+        'rel_base': 0,
         'write_v': 15, 'write_p': 2, 'next_p': 4, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -66,6 +71,7 @@ def test_command_multiplication():
     expected = {
         'code': '01002', 'type': 2,
         'nb_params': 2, 'params': [12, 3], 'input_v': None, 'opcodes': [1002, 36, 3, 1, 12], 'output_v': None,
+        'rel_base': 0,
         'write_v': 36, 'write_p': 1, 'next_p': 4, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -78,6 +84,7 @@ def test_command_take_input():
     expected = {
         'code': '01003', 'type': 3,
         'nb_params': 0, 'params': [], 'input_v': 73, 'opcodes': [73, 0, 3, 4, 12], 'output_v': None,
+        'rel_base': 0,
         'write_v': 73, 'write_p': 0, 'next_p': 2, 'exit': False,
     }
     test_command(opcodes, input_v, expected)
@@ -89,6 +96,7 @@ def test_command_provide_output():
     expected = {
         'code': '01004', 'type': 4,
         'nb_params': 1, 'params': [1004], 'input_v': None, 'opcodes': opcodes, 'output_v': 1004,
+        'rel_base': 0,
         'write_v': None, 'write_p': None, 'next_p': 2, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -100,6 +108,7 @@ def test_command_jump_if_true():
     expected = {
         'code': '00005', 'type': 5,
         'nb_params': 2, 'params': [5, 4], 'input_v': None, 'opcodes': opcodes, 'output_v': None,
+        'rel_base': 0,
         'write_v': None, 'write_p': None, 'next_p': 4, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -111,6 +120,7 @@ def test_command_jump_if_false():
     expected = {
         'code': '00006', 'type': 6,
         'nb_params': 2, 'params': [6, 4], 'input_v': None, 'opcodes': opcodes, 'output_v': None,
+        'rel_base': 0,
         'write_v': None, 'write_p': None, 'next_p': 3, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -122,6 +132,7 @@ def test_command_less_than():
     expected = {
         'code': '00007', 'type': 7,
         'nb_params': 2, 'params': [7, 5], 'input_v': None, 'opcodes': [7, 0, 3, 5, 12, 0], 'output_v': None,
+        'rel_base': 0,
         'write_v': 0, 'write_p': 5, 'next_p': 4, 'exit': False,
     }
     test_command(opcodes, None, expected)
@@ -133,17 +144,42 @@ def test_command_equals():
     expected = {
         'code': '00008', 'type': 8,
         'nb_params': 2, 'params': [8, 8], 'input_v': None, 'opcodes': [8, 0, 4, 5, 8, 1], 'output_v': None,
+        'rel_base': 0,
         'write_v': 1, 'write_p': 5, 'next_p': 4, 'exit': False,
     }
     test_command(opcodes, None, expected)
     print('-- test_command_equals went ok --')
+
+# For example, if the relative base is 2000, then after the instruction 109,19, the relative base would be 2019. If
+# the next instruction were 204,-34, then the value at address 1985 would be output.
+def test_command_offset():
+    opcodes = [109, 19, 204, -34] + [0 for _ in range(2000)]
+    opcodes[1985] = 42
+    base = 2000
+
+    expected1 = {
+        'code': '00109', 'type': 9,
+        'nb_params': 1, 'params': [19], 'input_v': None, 'opcodes': opcodes, 'output_v': None,
+        'rel_base': 2019,
+        'write_v': None, 'write_p': None, 'next_p': 2, 'exit': False,
+    }
+    expected2 = {
+        'code': '00204', 'type': 4,
+        'nb_params': 1, 'params': [42], 'input_v': None, 'opcodes': opcodes, 'output_v': 42,
+        'rel_base': 2019,
+        'write_v': None, 'write_p': None, 'next_p': 4, 'exit': False,
+    }
+    first_command = test_command(opcodes, None, expected1, position=0, base=base)
+    test_command(opcodes, None, expected2, first_command.next_position(), first_command.relative_basis)
+
+    print('-- test_command_offset went ok --')
 
 
 def test_command_exit():
     opcodes = [99, 0, 4, 5, 8, 42]
     expected = {
         'code': '00099', 'type': 99,
-        'nb_params': 0, 'params': [], 'input_v': None, 'opcodes': opcodes, 'output_v': None,
+        'nb_params': 0, 'params': [], 'input_v': None, 'opcodes': opcodes, 'output_v': None, 'rel_base': 0,
         'write_v': None, 'write_p': None, 'next_p': None, 'exit': True,
     }
     test_command(opcodes, None, expected)
@@ -160,6 +196,7 @@ def main():
     test_command_jump_if_false()
     test_command_less_than()
     test_command_equals()
+    test_command_offset()
     test_command_exit()
 
 
