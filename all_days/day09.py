@@ -24,21 +24,29 @@
 # test mode; it should only output a single value, the BOOST keycode. What BOOST keycode does it produce?
 
 # Second star:
+# You now have a complete Intcode computer.
+# The program runs in sensor boost mode by providing the input instruction the value 2. Once run, it will boost the
+# sensors automatically, but it might take a few seconds to complete the operation on slower hardware. In sensor boost
+# mode, the program will output a single value: the coordinates of the distress signal.
+# Run the BOOST program in sensor boost mode. What are the coordinates of the distress signal?
 
-from copy import deepcopy
 from all_days.intcode import Opcoder
 
 def run(data_dir, star):
     with open(f'{data_dir}/input-day09.txt', 'r') as fic:
         opcodes = [int(x) for x in fic.read().split(',')]
+    boost = Opcoder(opcodes)
+
     if star == 1:
-        boost = Opcoder(opcodes)
         boost.inputs([1])
-        boost.run_until_exit()
-        print(f'Star {star} - BOOST keycode is {boost.output_values[0]}')
-        return boost.output_values[0]
+        signification = 'BOOST keycode'
     elif star == 2:
-        print(f'Star {star} - ')
-        return
+        boost.inputs(2)
+        signification = 'coordinates of the distress signal'
     else:
         raise Exception('Star number must be either 1 or 2.')
+
+    boost.run_until_exit()
+    print(f'Star {star} - the {signification} is {boost.output_values[0]}')
+    return boost.output_values[0]
+
