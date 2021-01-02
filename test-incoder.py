@@ -1,14 +1,20 @@
 from all_days.intcode import Command, param_value
 
-
+# For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
 def test_param_values():
-    opcodes = [12, 2, 42]
+    opcodes = [12, 2, 42, -7] + [0 for _ in range(50)]
+    opcodes[50] = 73
+    opcodes[43] = 11
     position_param = param_value(opcodes, 1, 0)
     value_param = param_value(opcodes, 0, 1)
+    relative_param = param_value(opcodes, 3, 2, 50)
+
     if position_param != 42:
         raise Exception(f'Param value {position_param} is not expected value 42')
     if value_param != 12:
         raise Exception(f'Param value {value_param} is not expected value 12')
+    if relative_param != 11:
+        raise Exception(f'Param value {relative_param} is not expected value 11')
     print('-- test_param_values went ok --')
 
 
@@ -45,7 +51,6 @@ def test_command(opcodes, input_value, expected):
 
 
 def test_command_addition():
-    print('Testing Addition command')
     opcodes = [1001, 4, 3, 2, 12]
     expected = {
         'code': '01001', 'type': 1,
@@ -57,7 +62,6 @@ def test_command_addition():
 
 
 def test_command_multiplication():
-    print('Testing Multiplication command')
     opcodes = [1002, 4, 3, 1, 12]
     expected = {
         'code': '01002', 'type': 2,
@@ -69,7 +73,6 @@ def test_command_multiplication():
 
 
 def test_command_take_input():
-    print('Testing Take Input command')
     opcodes = [1003, 0, 3, 4, 12]
     input_v = 73
     expected = {
@@ -82,7 +85,6 @@ def test_command_take_input():
 
 
 def test_command_provide_output():
-    print('Testing Provide Output command')
     opcodes = [1004, 0, 3, 4, 12]
     expected = {
         'code': '01004', 'type': 4,
@@ -94,7 +96,6 @@ def test_command_provide_output():
 
 
 def test_command_jump_if_true():
-    print('Testing Jump If True command')
     opcodes = [5, 0, 3, 4, 12]
     expected = {
         'code': '00005', 'type': 5,
@@ -106,7 +107,6 @@ def test_command_jump_if_true():
 
 
 def test_command_jump_if_false():
-    print('Testing Jump If False command')
     opcodes = [6, 0, 3, 4, 12]
     expected = {
         'code': '00006', 'type': 6,
@@ -118,7 +118,6 @@ def test_command_jump_if_false():
 
 
 def test_command_less_than():
-    print('Testing Less Than command')
     opcodes = [7, 0, 3, 5, 12, 42]
     expected = {
         'code': '00007', 'type': 7,
@@ -130,7 +129,6 @@ def test_command_less_than():
 
 
 def test_command_equals():
-    print('Testing Equals command')
     opcodes = [8, 0, 4, 5, 8, 42]
     expected = {
         'code': '00008', 'type': 8,
@@ -142,7 +140,6 @@ def test_command_equals():
 
 
 def test_command_exit():
-    print('Testing Exit command')
     opcodes = [99, 0, 4, 5, 8, 42]
     expected = {
         'code': '00099', 'type': 99,
@@ -150,7 +147,7 @@ def test_command_exit():
         'write_v': None, 'write_p': None, 'next_p': None, 'exit': True,
     }
     test_command(opcodes, None, expected)
-    print('-- test_command_equals went ok --')
+    print('-- test_command_exit went ok --')
 
 
 def main():

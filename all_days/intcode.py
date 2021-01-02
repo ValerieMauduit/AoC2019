@@ -1,11 +1,13 @@
 from copy import deepcopy
 
-def param_value(opcodes, position, mode):
+def param_value(opcodes, position, mode, base=0):
     if mode == 0:    # position mode
         if opcodes[position] < len(opcodes):
             return opcodes[opcodes[position]]
     elif mode == 1:  # immediate mode
         return opcodes[position]
+    elif mode == 2:  # relative mode
+        return opcodes[opcodes[position] + base]
     else:
         raise ValueError(f'Mode {mode} not accepted')
 
