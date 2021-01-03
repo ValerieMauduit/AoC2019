@@ -12,9 +12,20 @@
 # Find the best location for a new monitoring station. How many other asteroids can be detected from that location?
 
 # Second star:
+# There are simply too many asteroids. The only solution is complete vaporization by giant laser.
+# The laser starts by pointing up and always rotates clockwise, vaporizing any asteroid it hits.
+# If multiple asteroids are exactly in line with the station, the laser only has enough power to vaporize one of them
+# before continuing its rotation. In other words, the same asteroids that can be detected can be vaporized, but if
+# vaporizing one asteroid makes another one detectable, the newly-detected asteroid won't be vaporized until the laser
+# has returned to the same position by rotating a full 360 degrees.
+# The Elves are placing bets on which will be the 200th asteroid to be vaporized. Win the bet by determining which
+# asteroid that will be; what do you get if you multiply its X coordinate by 100 and then add its Y coordinate?
 
-from math import gcd
+
+from math import gcd, sqrt
+from numpy import round
 from copy import deepcopy
+import pandas as pd
 
 def count_asteroids(asteroids_map, position):
     counting_map = deepcopy(asteroids_map)
@@ -49,15 +60,59 @@ def find_best_place(asteroids_map):
     return {'value': best_value, 'position': (xmax, ymax), 'map': counts_map}
 
 
+def rotation(position):
+    length = sqrt(position[0] ** 2 + position[1] ** 2)
+    if (position[0] >= 0) and (position[1] <= 0):
+        return round(position[0] / length, 6)
+    elif position[1] > 0:
+        return round(2 - position[0] / length, 6)
+    elif (position[0] < 0) and (position[1] <= 0):
+        return round(4 + position[0] / length, 6)
+
+
+def vaporization_lazer(asteroids_map, position):
+    df = pd.DataFrame(columns=['x', 'y', 'distance', 'rotation'])
+    width, height = (len(asteroids_map[0])), (len(asteroids_map))
+    n = 0
+    for x in range(width):
+        for y in range(height):
+            if asteroids_map[y][x] == '#':
+                dx = x - position[0]
+                dy = y - position[1]
+                df = df.append(pd.DataFrame(data={
+                    'x': x, 'y': y,
+                    'distance': abs(dx) + abs(dy),
+                    'rotation': rotation((dx, dy))
+                }, index=[n]))
+                n += 1
+    df.sort_values(by=['rotation','distance'], inplace=True)
+
+    asteroids_order = [(0, 0)]
+    nb_asteroids = sum([raw.count('#') for raw in asteroids_map])
+    while nb_asteroids > 0:
+        dfloc = df.copy()
+        while dfloc.shape[0] > 0:
+            asteroids_order += [(dfloc.iloc[0]['x'], dfloc.iloc[0]['y'])]
+            nb_asteroids -= 1
+            df.drop([dfloc.index[0]], inplace=True)
+            dfloc = dfloc[dfloc['rotation'] > dfloc.iloc[0]['rotation']]
+    return asteroids_order
+
+
 def run(data_dir, star):
     with open(f'{data_dir}/input-day10.txt', 'r') as fic:
         asteroids_map = [[v for v in x] for x in fic.read().strip('\n').split('\n')]
+    positionning_laser = find_best_place(asteroids_map)
     if star == 1:
-        solution = find_best_place(asteroids_map)
-        print(f'Star {star} - detected asteroids: {solution["value"]}')
+        print(f'Star {star} - detected asteroids: {positionning_laser["value"]}')
         return
     elif star == 2:
-        print(f'Star {star} - ')
+        best_position = positionning_laser['position']
+        asteroids_map[best_position[1]][best_position[0]] = 'X'
+        asteroids_order = vaporization_lazer(asteroids_map, best_position)
+        asteroid200 = asteroids_order[200]
+        solution = asteroid200[0] * 100 + asteroid200[1]
+        print(f'Star {star} - The 200th asteroid is on position {asteroid200}, so the soution is {solution}')
         return
     else:
         raise Exception('Star number must be either 1 or 2.')
