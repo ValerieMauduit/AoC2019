@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import argparse
 
-from all_days import day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11
+from all_days import day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12
 
 def main():
     parser = argparse.ArgumentParser(description="Advent of Code 2019")
@@ -32,6 +32,8 @@ def main():
         day10.run(args.dir, args.star)
     elif args.day == 11:
         day11.run(args.dir, args.star)
+    elif args.day == 12:
+        day12.run(args.dir, args.star)
     else:
         raise Exception("Day isn't already coded")
 
