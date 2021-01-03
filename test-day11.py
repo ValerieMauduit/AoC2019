@@ -75,6 +75,7 @@ def test_example1():
     print('Summary stage')
     if len(panel.positions) != 6:
         raise Exception('Exactly 6 panels should have been painted at least once')
+    panel.pretty_print()
 
     print('-- Test example 1 OK')
 
