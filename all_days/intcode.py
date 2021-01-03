@@ -219,5 +219,5 @@ class Opcoder():
 
     def run_until_next_output(self):
         nb_outputs = len(self.output_values)
-        while (not self.exit) and (len(self.output_value) == nb_outputs):
+        while (not self.exit) and (len(self.output_values) == nb_outputs):
             self.run_step()
