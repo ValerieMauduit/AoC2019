@@ -114,7 +114,7 @@ class Command():
         return None
 
     def execute_command(self):
-        if self.write_position() is not None:   # Write in memory commands
+        if self.write_position() is not None:    # Write in memory commands
             if self.write_position() >= len(self.intcodes):
                 temp = [0 for _ in range(self.write_position() + 1)]
                 temp[:len(self.intcodes)] = self.intcodes
@@ -186,10 +186,9 @@ class Opcoder():
         return None
 
     def run_step(self):
-        input_value = None
         if type(self.input_values) == list:
             input_value = self.input_values[0]
-        elif type(self.input_values) == int:
+        else:
             input_value = self.input_values
 
         command = Command(self.intcodes, self.pointer, input_value, self.relative_basis)
@@ -215,6 +214,10 @@ class Opcoder():
 
     def run_until_no_input(self):
         while (not self.exit) and (self.input_values is not None):
+            self.run_step()
+
+    def run_until_next_input(self):
+        while (not self.exit) and (Command(self.intcodes, self.pointer).type() != 3):
             self.run_step()
 
     def run_until_next_output(self):
