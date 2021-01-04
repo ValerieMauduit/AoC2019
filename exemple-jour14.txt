@@ -1,0 +1,101 @@
+1501 ORE + 225360422 PSHF + 600961535 QDVJ + 375600806 DCFZ + 225360571 KHKGT + 1 GPVTF + 2 HKGWZ + 300480739 NZVS
+molécules autorisées : ['PSHF', 'QDVJ', 'DCFZ', 'KHKGT', 'GPVTF', 'HKGWZ', 'NZVS', 'ORE']
+
+154 PSHF, 1 QDVJ, 154 DCFZ, 5 KHKGT, 9 GPVTF, 48 HKGWZ, 29 NZVS => 1 FUEL
+
+fuel added: 0
+réctions à ORE :
+157 ORE => 5 NZVS
+165 ORE => 6 DCFZ
+154 PSHF, 1 QDVJ, 154 DCFZ, 5 KHKGT, 9 GPVTF, 48 HKGWZ, 29 NZVS => 1 FUEL
+8 PSHF, 1 GPVTF, 12 HKGWZ => 9 QDVJ
+179 ORE => 7 PSHF
+177 ORE => 5 HKGWZ
+7 PSHF, 7 DCFZ => 2 XJWVT
+165 ORE => 2 GPVTF
+10 PSHF, 3 DCFZ, 5 HKGWZ, 7 NZVS => 8 KHKGT
+
+
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 9 GPVTF, 48 HKGWZ,        29 NZVS => 1 FUEL
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739
+  1463379       600961535         2438966        45072114        0         0         10361404
+
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 9 GPVTF, 48 HKGWZ,        29 NZVS           => 1 FUEL
+                                                                                                     165 ORE => 2 GPVTF
+                                                                                                     177 ORE => 5 HKGWZ
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 7 GPVTF, 43 HKGWZ,        29 NZVS   342 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+mêmes équations
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 5 GPVTF, 38 HKGWZ,        29 NZVS   684 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+mêmes équations
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 3 GPVTF, 33 HKGWZ,        29 NZVS  1026 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+mêmes équations
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 28 HKGWZ,        29 NZVS  1368 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+2ème équation seulement (on a assez de GPVT)
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 28 HKGWZ,        29 NZVS  1368 ORE => 1 FUEL  
+                                                                                                     177 ORE => 5 HKGWZ
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 23 HKGWZ,        29 NZVS  1545 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+plus assez d'ORE !!!
+première équation inverse trouvée
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 23 HKGWZ,        29 NZVS  1545 ORE => 1 FUEL  
+                                                                                                     157 ORE => 5 NZVS inversée
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 23 HKGWZ,        34 NZVS  1388 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+équation HKGWZ
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 18 HKGWZ,        34 NZVS  1565 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+je refais de l'ORE
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 18 HKGWZ,        39 NZVS  1408 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+                                                                                                     
+équation HKGWZ
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 13 HKGWZ,        39 NZVS  1585 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+je refais de l'ORE
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF, 13 HKGWZ,        44 NZVS  1428 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+                                                                                                     
+équation HKGWZ
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  8 HKGWZ,        44 NZVS  1605 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+je refais de l'ORE
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  8 HKGWZ,        49 NZVS  1448 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+                                                                                                     
+équation HKGWZ
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  3 HKGWZ,        49 NZVS  1625 ORE => 1 FUEL 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+je refais de l'ORE
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  3 HKGWZ,        54 NZVS  1468 ORE => 1 FUEL  
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+                                                                                                     
+équation HKGWZ
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  0 HKGWZ,        54 NZVS  1645 ORE => 1 FUEL + 3 HKGWZ
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+
+je refais de l'ORE
+      154 PSHF,         1 QDVJ,       154 DCFZ,         5 KHKGT, 1 GPVTF,  0 HKGWZ,        59 NZVS  1488 ORE => 1 FUEL  + 3 HKGWZ 
+225360422 PSHF, 600961535 QDVJ, 375600806 DCFZ, 225360571 KHKGT, 1 GPVTF,  2 HKGWZ, 300480739 NZVS, 1501 ORE
+coefs :
+  1463379       600961535         2438966        45072114        1         XXX        5092893          1
+
